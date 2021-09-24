@@ -35,7 +35,7 @@ public class UserTodoService {
         }
     }
 
-    public List<UserTodo> searchUserTodo(String userId){
+    public List<UserTodo> searchAllByUserId(String userId){
         return userTodoRepository.findAllByUserId(userId);
     }
 
@@ -45,5 +45,9 @@ public class UserTodoService {
 
     public void delete(Long id){
         userTodoRepository.deleteById(id);
+    }
+
+    public void deleteAll(){
+        userTodoRepository.deleteAll();
     }
 }

@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,7 +18,6 @@ public class UserTodoController {
 
     @PostMapping(value = "/user-todo")
     public UserTodoDTO.SAVE create(@RequestBody UserTodoDTO.SAVE saveUserTodo){
-
         UserTodo userTodo = new UserTodo();
         userTodo.setUserId(saveUserTodo.getUserId());
         userTodo.setTodoContent(saveUserTodo.getTodoContent());
@@ -26,7 +28,13 @@ public class UserTodoController {
         return saveUserTodo;
     }
 
-    @PutMapping(value = "/user-todo/{id}")
+    @GetMapping(value = "/user-todo")
+    public List<UserTodoDTO.SEARCH> searchAll(){
+        List<UserTodo> userTodoList = userTodoService.searchAll();
+        return transferList(userTodoList);
+    }
+
+    @PutMapping(value = "/user-todo/todo/{id}")
     public UserTodoDTO.SAVE update(@PathVariable("id") Long id, @RequestBody UserTodoDTO.SAVE saveUserTodo){
         UserTodo userTodo = new UserTodo();
         userTodo.setTodoContent(saveUserTodo.getTodoContent());
@@ -37,5 +45,42 @@ public class UserTodoController {
 
         return saveUserTodo;
     }
+
+    @DeleteMapping(value = "/user-todo/todo/{id}")
+    public void delete(@PathVariable("id") Long id){
+        userTodoService.delete(id);
+    }
+
+    @DeleteMapping(value = "/user-todo/todo/all")
+    public void deleteAll(){
+        userTodoService.deleteAll();
+    }
+
+    @GetMapping(value = "/user-todo/user/{userId}")
+    public List<UserTodoDTO.SEARCH> searchAllByUserId(@PathVariable("userId") String userId){
+        List<UserTodo> userTodoList = userTodoService.searchAllByUserId(userId);
+        return transferList(userTodoList);
+    }
+
+        private List<UserTodoDTO.SEARCH> transferList(List<UserTodo> userTodoList){
+            List<UserTodoDTO.SEARCH> uerSearchList = new ArrayList<>();
+            for(UserTodo ut : userTodoList){
+                UserTodoDTO.SEARCH search = new UserTodoDTO.SEARCH();
+                search.setId(ut.getId());
+                search.setUserId(ut.getUserId());
+                search.setTodoContent(ut.getTodoContent());
+                search.setIsCompleted(ut.getIsCompleted());
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String regDate = formatter.format(ut.getCreatedAt());
+                search.setRegDate(regDate);
+
+                uerSearchList.add(search);
+            }
+            return uerSearchList;
+        }
+
+
+
 
 }
