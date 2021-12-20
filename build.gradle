@@ -24,6 +24,14 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// xss util
+	implementation 'org.apache.commons:commons-text:1.9'
+
+	implementation group: 'commons-io', name: 'commons-io', version: '2.5'
+
+	implementation 'com.google.code.gson:gson:2.8.5'
+
 }
 
 test {
